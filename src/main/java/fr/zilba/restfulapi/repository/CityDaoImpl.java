@@ -4,10 +4,7 @@ import fr.zilba.restfulapi.model.City;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +19,7 @@ public class CityDaoImpl implements CityDao {
         this.daoFactory = daoFactory;
     }
 
-    private String addParamToRequest(String request, Map params, String param, String sqlParam, boolean isLike) {
+    private String addParamToRequest(String request, Map<String, String> params, String param, String sqlParam, boolean isLike) {
         if (params.containsKey(param) && params.get(param) != null) {
             if (!request.contains("WHERE")) {
                 request += " WHERE";
@@ -36,7 +33,7 @@ public class CityDaoImpl implements CityDao {
                 value = "%" + params.get(param) + "%";
             } else {
                 like = "=";
-                value = (String) params.get(param);
+                value = params.get(param);
             }
             request += " " + sqlParam + like + "'" + value + "'";
         }
@@ -44,7 +41,7 @@ public class CityDaoImpl implements CityDao {
     }
 
     @Override
-    public List<City> list(Map params) {
+    public List<City> list(Map<String, String> params) {
         Connection connexion;
         Statement statement;
         ResultSet result;
@@ -59,7 +56,6 @@ public class CityDaoImpl implements CityDao {
         request = addParamToRequest(request, params, "ligne5", "Ligne_5", false);
         request = addParamToRequest(request, params, "latitude", "Latitude", false);
         request = addParamToRequest(request, params, "longitude", "Longitude", false);
-        System.out.println(request);
 
         try {
             connexion = daoFactory.getConnection();
@@ -67,7 +63,7 @@ public class CityDaoImpl implements CityDao {
             result = statement.executeQuery(request);
 
             while (result.next()) {
-                int id = result.getInt("Code_commune_INSEE");
+                String codeCommuneInsee = result.getString("Code_commune_INSEE");
                 String name = result.getString("Nom_commune");
                 String postalCode = result.getString("Code_postal");
                 String libelleAcheminement = result.getString("Libelle_acheminement");
@@ -75,7 +71,7 @@ public class CityDaoImpl implements CityDao {
                 String latitude = result.getString("Latitude");
                 String longitude = result.getString("Longitude");
 
-                City city = new City(id, name, postalCode, libelleAcheminement, ligne5, latitude, longitude);
+                City city = new City(codeCommuneInsee, name, postalCode, libelleAcheminement, ligne5, latitude, longitude);
                 cities.add(city);
 
             }
@@ -84,5 +80,94 @@ public class CityDaoImpl implements CityDao {
         }
 
         return cities;
+    }
+
+    @Override
+    public City add(City city) {
+        Connection connexion;
+        PreparedStatement statement;
+
+        String request = "INSERT INTO ville_france (Code_commune_INSEE, Nom_commune, Code_postal, Libelle_acheminement, Ligne_5, Latitude, Longitude) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            connexion = daoFactory.getConnection();
+            statement = connexion.prepareStatement(request);
+            statement.setString(1, city.getCodeCommuneInsee());
+            statement.setString(2, city.getNomCommune());
+            statement.setString(3, city.getCodePostal());
+            statement.setString(4, city.getLibelleAcheminement());
+            statement.setString(5, city.getLigne5());
+            statement.setString(6, city.getLatitude());
+            statement.setString(7, city.getLongitude());
+            statement.executeUpdate();
+            return city;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public void delete(String codeCommune) {
+        Connection connexion;
+        PreparedStatement statement;
+
+        String request = "DELETE FROM ville_france WHERE Code_commune_INSEE = ?";
+
+        try {
+            connexion = daoFactory.getConnection();
+            statement = connexion.prepareStatement(request);
+            statement.setString(1, codeCommune);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public City update(String codeCommune, Map<String, String> params) {
+        Connection connexion;
+        Statement statement;
+        List<City> cities = list(Map.of("codeCommune", codeCommune));
+
+        if (cities.isEmpty()) {
+            return null;
+        }
+        City city = cities.get(0);
+
+        //build request
+        String request = "UPDATE ville_france";
+        request = addParamToRequestUpdate(request, params, "nomCommune", "Nom_commune");
+        request = addParamToRequestUpdate(request, params, "codePostal", "Code_postal");
+        request = addParamToRequestUpdate(request, params, "libelleAcheminement", "Libelle_acheminement");
+        request = addParamToRequestUpdate(request, params, "ligne5", "Ligne_5");
+        request = addParamToRequestUpdate(request, params, "latitude", "Latitude");
+        request = addParamToRequestUpdate(request, params, "longitude", "Longitude");
+
+        request += " WHERE Code_commune_INSEE = '" + codeCommune + "'";
+
+        try {
+            connexion = daoFactory.getConnection();
+            statement = connexion.createStatement();
+            statement.executeUpdate(request);
+            return city;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String addParamToRequestUpdate(String request, Map<String, String> params, String param, String sqlParam) {
+        if (params.containsKey(param) && params.get(param) != null) {
+            if (!request.contains("SET")) {
+                request += " SET ";
+            } else {
+                request += ",";
+            }
+            request += " " + sqlParam + " = '" + params.get(param) + "'";
+        }
+        return request;
     }
 }
