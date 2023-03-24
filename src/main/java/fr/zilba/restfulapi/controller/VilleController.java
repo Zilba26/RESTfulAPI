@@ -47,7 +47,7 @@ public class VilleController {
 
     @DeleteMapping("/ville")
     @ResponseBody
-    public ResponseEntity<?> delete(@RequestParam(value = "codeCommune") String codeCommune) {
+    public ResponseEntity<City> delete(@RequestParam(value = "codeCommune") String codeCommune) {
         City city = villeService.deleteCity(codeCommune);
         if (city == null) {
             return ResponseEntity.notFound().build();
