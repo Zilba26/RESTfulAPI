@@ -15,8 +15,8 @@ public class VilleServiceImpl implements VilleService {
     private CityDao cityDao;
 
     @Override
-    public List<City> getInfoCities(Map<String, String> params) {
-        return cityDao.list(params);
+    public List<City> getInfoCities(Map<String, String> params, String order) {
+        return cityDao.list(params, order);
     }
 
     @Override

@@ -48,18 +48,24 @@ public class CityDaoImpl implements CityDao {
     }
 
     @Override
-    public List<City> list(Map<String, String> params) {
+    public List<City> list(Map<String, String> params, String order) {
         List<City> cities = new ArrayList<>();
 
         //build request
         String request = "SELECT * FROM ville_france";
-        request = addParamToRequest(request, params, "nomCommune", NOM_COMMUNE_PARAM, true);
-        request = addParamToRequest(request, params, "codeCommune", "Code_commune_INSEE", false);
-        request = addParamToRequest(request, params, "codePostal", CODE_POSTAL_PARAM, false);
-        request = addParamToRequest(request, params, "libelleAcheminement", LIBELLE_ACHEMINEMENT_PARAM, true);
-        request = addParamToRequest(request, params, "ligne5", LIGNE_5_PARAM, false);
-        request = addParamToRequest(request, params, "latitude", LATITUDE_PARAM, false);
-        request = addParamToRequest(request, params, "longitude", LONGITUDE_PARAM, false);
+        if (params != null) {
+            request = addParamToRequest(request, params, "nomCommune", NOM_COMMUNE_PARAM, true);
+            request = addParamToRequest(request, params, "codeCommune", "Code_commune_INSEE", false);
+            request = addParamToRequest(request, params, "codePostal", CODE_POSTAL_PARAM, false);
+            request = addParamToRequest(request, params, "libelleAcheminement", LIBELLE_ACHEMINEMENT_PARAM, true);
+            request = addParamToRequest(request, params, "ligne5", LIGNE_5_PARAM, false);
+            request = addParamToRequest(request, params, "latitude", LATITUDE_PARAM, false);
+            request = addParamToRequest(request, params, "longitude", LONGITUDE_PARAM, false);
+        }
+
+        if (order != null) {
+            request += " ORDER BY " + order;
+        }
 
         try (Connection connexion = daoFactory.getConnection();
              Statement statement = connexion.createStatement();

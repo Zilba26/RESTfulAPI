@@ -1,0 +1,62 @@
+select {
+    font-size: 16px;
+    padding: 10px 5px;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.cities {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.arrow {
+    font-size: 30px;
+    margin: 0 20px;
+}
+
+.distance {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.distance-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.distance-value {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+:root {
+    --dynamic-size1: 20px;
+    --dynamic-size2: 20px;
+    --arrow-size: 45px; /* + le padding */
+    --select-size1: calc(var(--dynamic-size1) + var(--arrow-size));
+    --select-size2: calc(var(--dynamic-size2) + var(--arrow-size));
+}
+
+.first-select {
+    width: var(--select-size1);
+}
+
+.second-select {
+    width: var(--select-size2);
+}
+
+.helper-element {
+    position: absolute;
+    top: 0;
+    left: -9999px;
+}

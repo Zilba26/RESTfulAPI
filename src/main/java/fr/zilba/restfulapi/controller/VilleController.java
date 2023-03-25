@@ -25,7 +25,8 @@ public class VilleController {
             @RequestParam(required = false, value = "libelleAcheminement") String libelleAcheminement,
             @RequestParam(required = false, value = "ligne5") String ligne5,
             @RequestParam(required = false, value = "latitude") String latitude,
-            @RequestParam(required = false, value = "longitude") String longitude) {
+            @RequestParam(required = false, value = "longitude") String longitude,
+            @RequestParam(required = false, value = "order") String order) {
 
         Map<String, String> params = new HashMap<>();
         params.put("codeCommune", codeCommune);
@@ -36,7 +37,7 @@ public class VilleController {
         params.put("latitude", latitude);
         params.put("longitude", longitude);
 
-        return villeService.getInfoCities(params);
+        return villeService.getInfoCities(params, order);
     }
 
     @PostMapping("/ville")

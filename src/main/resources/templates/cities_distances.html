@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Distance entre deux villes</title>
+  <link rel="stylesheet" th:href="@{/css/all.css}" />
+  <link rel="stylesheet" th:href="@{/css/all.min.css}" />
+  <link rel="stylesheet" th:href="@{/css/cities_distances.css}">
+</head>
+<body>
+<div class="container">
+  <div class="cities">
+    <h2>Sélectionnez une ville de départ</h2>
+    <select class="first-select" th:name="city1">
+      <option th:each="city : ${cities}" th:value="${city}" th:text="${city.getNomCommune()} + ' (' + ${city.getCodeCommuneInsee().substring(0, 2)} + ')'"></option>
+    </select>
+  </div>
+  <i class="arrow fa fa-arrow-left-long"></i>
+  <div class="distance">
+    <h2 class="distance-title">Distance entre</h2>
+    <h2 class="distance-value">0 km</h2>
+  </div>
+  <i class="arrow fa fa-arrow-right-long"></i>
+  <div class="cities">
+    <h2>Sélectionnez une ville d'arrivée</h2>
+    <select class="second-select" th:name="city2">
+      <option th:each="city : ${cities}" th:value="${city}" th:text="${city.getNomCommune()} + ' (' + ${city.getCodeCommuneInsee().substring(0, 2)} + ')'"></option>
+    </select>
+    <span class="helper-element" aria-hidden="true"></span>
+  </div>
+</div>
+<script type="text/javascript" th:src="@{/js/cities_distances.js}"></script>
+</body>
+</html>

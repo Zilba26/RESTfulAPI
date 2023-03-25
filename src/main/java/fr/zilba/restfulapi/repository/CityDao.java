@@ -7,7 +7,11 @@ import java.util.Map;
 
 public interface CityDao {
 
-    List<City> list(Map<String, String> params);
+    List<City> list(Map<String, String> params, String order);
+
+    default List<City> list(Map<String, String> params) {
+        return list(params, null);
+    }
 
     City add(City city);
 
