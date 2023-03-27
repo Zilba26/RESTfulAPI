@@ -10,10 +10,6 @@ public interface VilleService {
 
     List<City> getInfoCities(Map<String, String> params, String order);
 
-    default List<City> getInfoCities(String order) {
-        return getInfoCities(null, order);
-    }
-
     City createCity(City ville);
 
     City deleteCity(String codeCommune);
