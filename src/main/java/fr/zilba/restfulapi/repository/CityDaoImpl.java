@@ -48,7 +48,7 @@ public class CityDaoImpl implements CityDao {
     }
 
     @Override
-    public List<City> list(Map<String, String> params, String order) {
+    public List<City> list(Map<String, String> params, String order, Integer rowBegin, Integer size) {
         List<City> cities = new ArrayList<>();
 
         //build request
@@ -65,6 +65,10 @@ public class CityDaoImpl implements CityDao {
 
         if (order != null) {
             request += " ORDER BY " + order;
+        }
+
+        if (rowBegin != null && size != null) {
+            request += " LIMIT " + rowBegin + ", " + size;
         }
 
         try (Connection connexion = daoFactory.getConnection();
@@ -151,6 +155,21 @@ public class CityDaoImpl implements CityDao {
              Statement statement = connection.createStatement()) {
             statement.executeUpdate(request);
             return city;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Integer count() {
+        String request = "SELECT COUNT(*) FROM ville_france";
+        try (Connection connection = daoFactory.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet result = statement.executeQuery(request)) {
+            if (result.next()) {
+                return result.getInt(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

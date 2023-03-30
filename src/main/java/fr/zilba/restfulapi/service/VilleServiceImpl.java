@@ -15,8 +15,9 @@ public class VilleServiceImpl implements VilleService {
     private CityDao cityDao;
 
     @Override
-    public List<City> getInfoCities(Map<String, String> params, String order) {
-        return cityDao.list(params, order);
+    public List<City> getInfoCities(Map<String, String> params, String order, Integer page, Integer size) {
+        Integer rowBegin = (page == null || size == null) ? null : (page - 1) * size;
+        return cityDao.list(params, order, rowBegin, size);
     }
 
     @Override
@@ -38,5 +39,10 @@ public class VilleServiceImpl implements VilleService {
     @Override
     public City updateCity(String codeCommune, Map<String, String> params) {
         return cityDao.update(codeCommune, params);
+    }
+
+    @Override
+    public Integer getCount() {
+        return cityDao.count();
     }
 }

@@ -7,10 +7,10 @@ import java.util.Map;
 
 public interface CityDao {
 
-    List<City> list(Map<String, String> params, String order);
+    List<City> list(Map<String, String> params, String order, Integer rowBegin, Integer size);
 
     default List<City> list(Map<String, String> params) {
-        return list(params, null);
+        return list(params, null, null, null);
     }
 
     City add(City city);
@@ -18,4 +18,6 @@ public interface CityDao {
     void delete(String codeCommune);
 
     City update(String codeCommune, Map<String, String> params);
+
+    Integer count();
 }
