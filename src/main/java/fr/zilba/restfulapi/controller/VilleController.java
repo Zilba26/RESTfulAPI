@@ -19,26 +19,12 @@ public class VilleController {
     @GetMapping("/ville")
     @ResponseBody
     public List<City> get(
-            @RequestParam(required = false, value = "codeCommune") String codeCommune,
-            @RequestParam(required = false, value = "nomCommune") String nomCommune,
-            @RequestParam(required = false, value = "codePostal") String codePostal,
-            @RequestParam(required = false, value = "libelleAcheminement") String libelleAcheminement,
-            @RequestParam(required = false, value = "ligne5") String ligne5,
-            @RequestParam(required = false, value = "latitude") String latitude,
-            @RequestParam(required = false, value = "longitude") String longitude,
+            @ModelAttribute City city,
             @RequestParam(required = false, value = "order") String order,
             @RequestParam(required = false, value = "page") Integer page,
             @RequestParam(required = false, value = "size") Integer size) {
 
-        Map<String, String> params = new HashMap<>();
-        params.put("codeCommune", codeCommune);
-        params.put("nomCommune", nomCommune);
-        params.put("codePostal", codePostal);
-        params.put("libelleAcheminement", libelleAcheminement);
-        params.put("ligne5", ligne5);
-        params.put("latitude", latitude);
-        params.put("longitude", longitude);
-
+        Map<String, String> params = getParams(city);
         return villeService.getInfoCities(params, order, page, size);
     }
 
@@ -72,6 +58,17 @@ public class VilleController {
             return ResponseEntity.badRequest().build();
         }
 
+        Map<String, String> params = getParams(city);
+
+        City goodCity = villeService.updateCity(city.getCodeCommuneInsee(), params);
+        if (goodCity == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok().build();
+        }
+    }
+
+    private Map<String, String> getParams(City city) {
         Map<String, String> params = new HashMap<>();
         params.put("codeCommune", city.getCodeCommuneInsee());
         params.put("nomCommune", city.getNomCommune());
@@ -80,12 +77,6 @@ public class VilleController {
         params.put("ligne5", city.getLigne5());
         params.put("latitude", city.getLatitude());
         params.put("longitude", city.getLongitude());
-
-        City goodCity = villeService.updateCity(city.getCodeCommuneInsee(), params);
-        if (goodCity == null) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok(goodCity);
-        }
+        return params;
     }
 }
