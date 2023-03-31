@@ -64,7 +64,15 @@ public class CityDaoImpl implements CityDao {
         }
 
         if (order != null) {
-            request += " ORDER BY " + order;
+            String orderColumn = order.substring(0, order.length() - 2);
+            String orderBy = " ORDER BY ";
+            if (order.endsWith("_A")) {
+                request += orderBy + orderColumn + " ASC";
+            } else if (order.endsWith("_D")) {
+                request += orderBy + orderColumn + " DESC";
+            } else {
+                request += orderBy + order;
+            }
         }
 
         if (rowBegin != null && size != null) {
