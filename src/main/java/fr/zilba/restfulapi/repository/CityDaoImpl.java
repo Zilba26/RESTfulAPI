@@ -1,6 +1,8 @@
 package fr.zilba.restfulapi.repository;
 
 import fr.zilba.restfulapi.model.City;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +16,8 @@ public class CityDaoImpl implements CityDao {
 
     @Autowired
     private final DaoFactory daoFactory;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CityDaoImpl.class);
 
     private static final String NOM_COMMUNE_PARAM = "Nom_commune";
     private static final String CODE_POSTAL_PARAM = "Code_postal";
@@ -97,7 +101,7 @@ public class CityDaoImpl implements CityDao {
 
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("An SQL exception occurred", e);
         }
 
         return cities;
@@ -120,7 +124,7 @@ public class CityDaoImpl implements CityDao {
             return city;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("An SQL exception occurred", e);
         }
         return null;
     }
@@ -135,7 +139,7 @@ public class CityDaoImpl implements CityDao {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("An SQL exception occurred", e);
         }
     }
 
@@ -164,7 +168,7 @@ public class CityDaoImpl implements CityDao {
             statement.executeUpdate(request);
             return city;
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("An SQL exception occurred", e);
         }
         return null;
     }
@@ -179,7 +183,7 @@ public class CityDaoImpl implements CityDao {
                 return result.getInt(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("An SQL exception occurred", e);
         }
         return null;
     }
