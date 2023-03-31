@@ -25,6 +25,7 @@ public class CityDaoImpl implements CityDao {
     private static final String LIGNE_5_PARAM = "Ligne_5";
     private static final String LATITUDE_PARAM = "Latitude";
     private static final String LONGITUDE_PARAM = "Longitude";
+    private static final String ERROR_SQL_STRING = "An SQL exception occurred";
 
     CityDaoImpl(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
@@ -101,7 +102,7 @@ public class CityDaoImpl implements CityDao {
 
             }
         } catch (SQLException e) {
-            LOGGER.error("An SQL exception occurred", e);
+            LOGGER.error(ERROR_SQL_STRING, e);
         }
 
         return cities;
@@ -124,7 +125,7 @@ public class CityDaoImpl implements CityDao {
             return city;
 
         } catch (SQLException e) {
-            LOGGER.error("An SQL exception occurred", e);
+            LOGGER.error(ERROR_SQL_STRING, e);
         }
         return null;
     }
@@ -139,7 +140,7 @@ public class CityDaoImpl implements CityDao {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            LOGGER.error("An SQL exception occurred", e);
+            LOGGER.error(ERROR_SQL_STRING, e);
         }
     }
 
@@ -168,7 +169,7 @@ public class CityDaoImpl implements CityDao {
             statement.executeUpdate(request);
             return city;
         } catch (SQLException e) {
-            LOGGER.error("An SQL exception occurred", e);
+            LOGGER.error(ERROR_SQL_STRING, e);
         }
         return null;
     }
@@ -183,7 +184,7 @@ public class CityDaoImpl implements CityDao {
                 return result.getInt(1);
             }
         } catch (SQLException e) {
-            LOGGER.error("An SQL exception occurred", e);
+            LOGGER.error(ERROR_SQL_STRING, e);
         }
         return null;
     }
