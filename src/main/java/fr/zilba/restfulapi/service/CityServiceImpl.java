@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class VilleServiceImpl implements VilleService {
+public class CityServiceImpl implements CityService {
 
     @Autowired
     private CityDao cityDao;
@@ -44,5 +44,10 @@ public class VilleServiceImpl implements VilleService {
     @Override
     public Integer getCount() {
         return cityDao.count();
+    }
+
+    @Override
+    public boolean deletePartialCity(String codeCommune) {
+        return cityDao.deletePartial(codeCommune);
     }
 }

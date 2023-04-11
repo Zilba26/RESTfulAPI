@@ -19,6 +19,7 @@ public class CityDaoImpl implements CityDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CityDaoImpl.class);
 
+    private static final String CODE_COMMUNE_INSEE_PARAM = "Code_commune_INSEE";
     private static final String NOM_COMMUNE_PARAM = "Nom_commune";
     private static final String CODE_POSTAL_PARAM = "Code_postal";
     private static final String LIBELLE_ACHEMINEMENT_PARAM = "Libelle_acheminement";
@@ -33,11 +34,7 @@ public class CityDaoImpl implements CityDao {
 
     private String addParamToRequest(String request, Map<String, String> params, String param, String sqlParam, boolean isLike) {
         if (params.containsKey(param) && params.get(param) != null) {
-            if (!request.contains("WHERE")) {
-                request += " WHERE";
-            } else {
-                request += " AND";
-            }
+            request += " AND";
             String like;
             String value;
             if (isLike) {
@@ -57,10 +54,10 @@ public class CityDaoImpl implements CityDao {
         List<City> cities = new ArrayList<>();
 
         //build request
-        String request = "SELECT * FROM ville_france";
+        String request = "SELECT * FROM ville_france WHERE flag=false";
         if (params != null) {
             request = addParamToRequest(request, params, "nomCommune", NOM_COMMUNE_PARAM, true);
-            request = addParamToRequest(request, params, "codeCommune", "Code_commune_INSEE", false);
+            request = addParamToRequest(request, params, "codeCommune", CODE_COMMUNE_INSEE_PARAM, false);
             request = addParamToRequest(request, params, "codePostal", CODE_POSTAL_PARAM, false);
             request = addParamToRequest(request, params, "libelleAcheminement", LIBELLE_ACHEMINEMENT_PARAM, true);
             request = addParamToRequest(request, params, "ligne5", LIGNE_5_PARAM, false);
@@ -89,7 +86,7 @@ public class CityDaoImpl implements CityDao {
              ResultSet result = statement.executeQuery(request)) {
 
             while (result.next()) {
-                String codeCommuneInsee = result.getString("Code_commune_INSEE");
+                String codeCommuneInsee = result.getString(CODE_COMMUNE_INSEE_PARAM);
                 String name = result.getString(NOM_COMMUNE_PARAM);
                 String postalCode = result.getString(CODE_POSTAL_PARAM);
                 String libelleAcheminement = result.getString(LIBELLE_ACHEMINEMENT_PARAM);
@@ -162,7 +159,7 @@ public class CityDaoImpl implements CityDao {
         request = addParamToRequestUpdate(request, params, "latitude", LATITUDE_PARAM);
         request = addParamToRequestUpdate(request, params, "longitude", LONGITUDE_PARAM);
 
-        request += " WHERE Code_commune_INSEE = '" + codeCommune + "'";
+        request += " WHERE " + CODE_COMMUNE_INSEE_PARAM + " = '" + codeCommune + "'";
 
         try (Connection connection = daoFactory.getConnection();
              Statement statement = connection.createStatement()) {
@@ -176,7 +173,7 @@ public class CityDaoImpl implements CityDao {
 
     @Override
     public Integer count() {
-        String request = "SELECT COUNT(*) FROM ville_france";
+        String request = "SELECT COUNT(*) FROM ville_france WHERE flag=false";
         try (Connection connection = daoFactory.getConnection();
              Statement statement = connection.createStatement();
              ResultSet result = statement.executeQuery(request)) {
@@ -187,6 +184,22 @@ public class CityDaoImpl implements CityDao {
             LOGGER.error(ERROR_SQL_STRING, e);
         }
         return null;
+    }
+
+    @Override
+    public boolean deletePartial(String codeCommune) {
+        String request = "UPDATE ville_france SET flag=true WHERE Code_commune_INSEE = ?";
+
+        try (Connection connection = daoFactory.getConnection();
+             PreparedStatement statement = connection.prepareStatement(request)) {
+            statement.setString(1, codeCommune);
+            statement.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            LOGGER.error(ERROR_SQL_STRING, e);
+        }
+        return false;
     }
 
     private String addParamToRequestUpdate(String request, Map<String, String> params, String param, String sqlParam) {

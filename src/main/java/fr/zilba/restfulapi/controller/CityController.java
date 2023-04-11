@@ -1,7 +1,7 @@
 package fr.zilba.restfulapi.controller;
 
 import fr.zilba.restfulapi.model.City;
-import fr.zilba.restfulapi.service.VilleService;
+import fr.zilba.restfulapi.service.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class VilleController {
+public class CityController {
 
     @Autowired
-    VilleService villeService;
+    CityService villeService;
 
     @GetMapping("/ville")
     @ResponseBody
@@ -62,6 +62,17 @@ public class VilleController {
 
         City goodCity = villeService.updateCity(city.getCodeCommuneInsee(), params);
         if (goodCity == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok().build();
+        }
+    }
+
+    @PutMapping("/ville/delete/{codeCommune}")
+    @ResponseBody
+    public ResponseEntity<City> partialDelete(@PathVariable String codeCommune) {
+        boolean isGood = villeService.deletePartialCity(codeCommune);
+        if (!isGood) {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok().build();

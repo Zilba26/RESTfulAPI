@@ -20,4 +20,6 @@ public interface CityDao {
     City update(String codeCommune, Map<String, String> params);
 
     Integer count();
+
+    boolean deletePartial(String codeCommune);
 }
