@@ -50,4 +50,9 @@ public class CityServiceImpl implements CityService {
     public boolean deletePartialCity(String codeCommune) {
         return cityDao.deletePartial(codeCommune);
     }
+
+    @Override
+    public boolean uninhibitedCity(String codeCommune) {
+        return cityDao.uninhibited(codeCommune);
+    }
 }

@@ -14,9 +14,9 @@ import java.util.Map;
 public class CityController {
 
     @Autowired
-    CityService villeService;
+    CityService cityService;
 
-    @GetMapping("/ville")
+    @GetMapping("/city")
     @ResponseBody
     public List<City> get(
             @ModelAttribute City city,
@@ -25,24 +25,29 @@ public class CityController {
             @RequestParam(required = false, value = "size") Integer size) {
 
         Map<String, String> params = getParams(city);
-        return villeService.getInfoCities(params, order, page, size);
+        return cityService.getInfoCities(params, order, page, size);
     }
 
-    @GetMapping("/ville/count")
+    @GetMapping("/city/count")
     public Integer count() {
-        return villeService.getCount();
+        return cityService.getCount();
     }
 
-    @PostMapping("/ville")
+    @PostMapping("/city")
     @ResponseBody
-    public City post(@RequestBody City city) {
-        return villeService.createCity(city);
+    public ResponseEntity<City> post(@RequestBody City city) {
+        City cityResult = cityService.createCity(city);
+        if (cityResult == null) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            return ResponseEntity.ok(city);
+        }
     }
 
-    @DeleteMapping("/ville")
+    @DeleteMapping("/city")
     @ResponseBody
     public ResponseEntity<City> delete(@RequestParam(value = "codeCommune") String codeCommune) {
-        City city = villeService.deleteCity(codeCommune);
+        City city = cityService.deleteCity(codeCommune);
         if (city == null) {
             return ResponseEntity.notFound().build();
         } else {
@@ -50,7 +55,7 @@ public class CityController {
         }
     }
 
-    @PutMapping("/ville")
+    @PutMapping("/city")
     @ResponseBody
     public ResponseEntity<City> update(@RequestBody City city) {
 
@@ -60,7 +65,7 @@ public class CityController {
 
         Map<String, String> params = getParams(city);
 
-        City goodCity = villeService.updateCity(city.getCodeCommuneInsee(), params);
+        City goodCity = cityService.updateCity(city.getCodeCommuneInsee(), params);
         if (goodCity == null) {
             return ResponseEntity.notFound().build();
         } else {
@@ -68,10 +73,21 @@ public class CityController {
         }
     }
 
-    @PutMapping("/ville/delete/{codeCommune}")
+    @PutMapping("/city/delete/{codeCommune}")
     @ResponseBody
     public ResponseEntity<City> partialDelete(@PathVariable String codeCommune) {
-        boolean isGood = villeService.deletePartialCity(codeCommune);
+        boolean isGood = cityService.deletePartialCity(codeCommune);
+        if (!isGood) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok().build();
+        }
+    }
+
+    @PutMapping("/city/uninhibited")
+    @ResponseBody
+    public ResponseEntity<City> uninhibitedCity(@RequestParam(required = false) String codeCommune) {
+        boolean isGood = cityService.uninhibitedCity(codeCommune);
         if (!isGood) {
             return ResponseEntity.notFound().build();
         } else {

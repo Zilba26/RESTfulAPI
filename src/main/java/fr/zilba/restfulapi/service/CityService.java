@@ -19,4 +19,6 @@ public interface CityService {
     Integer getCount();
 
     boolean deletePartialCity(String codeCommune);
+
+    boolean uninhibitedCity(String codeCommune);
 }

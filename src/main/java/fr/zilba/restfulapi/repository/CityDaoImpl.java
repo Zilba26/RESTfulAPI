@@ -202,6 +202,28 @@ public class CityDaoImpl implements CityDao {
         return false;
     }
 
+    @Override
+    public boolean uninhibited(String codeCommune) {
+        String request = "UPDATE ville_france SET flag=0";
+
+        if (codeCommune != null && codeCommune.isEmpty()) {
+            request += " WHERE Code_commune_INSEE = ?";
+        }
+
+        try (Connection connection = daoFactory.getConnection();
+             PreparedStatement statement = connection.prepareStatement(request)) {
+            if (codeCommune != null && codeCommune.isEmpty()) {
+                statement.setString(1, codeCommune);
+            }
+            statement.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            LOGGER.error(ERROR_SQL_STRING, e);
+        }
+        return false;
+    }
+
     private String addParamToRequestUpdate(String request, Map<String, String> params, String param, String sqlParam) {
         if (params.containsKey(param) && params.get(param) != null) {
             if (!request.contains("SET")) {

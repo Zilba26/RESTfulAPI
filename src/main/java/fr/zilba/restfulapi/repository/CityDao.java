@@ -22,4 +22,6 @@ public interface CityDao {
     Integer count();
 
     boolean deletePartial(String codeCommune);
+
+    boolean uninhibited(String codeCommune);
 }
